@@ -1,0 +1,114 @@
+body{
+  font-family:'Segoe UI',Arial,Helvetica,sans-serif;
+  background-color:#fce4ec; /* light pink background */
+  color:#1b1b1b;
+  margin:0;
+  padding:20px 0;
+}
+
+h1{
+  text-align:center;
+  color:#c2185b; /* pink headline */
+}
+
+.banner{
+  max-width:790px;
+  margin:0 auto 12px auto;
+  background:#a8e6cf; /* avocado green */
+  color:#1b1b1b;
+  padding:10px 12px;
+  border:2px solid #81c784;
+  border-radius:10px;
+  font-size:14px;
+  text-align:center;
+}
+
+#dhtmlgoodies_dragDropContainer{
+  width:790px;
+  height:770px;
+  border:3px solid #f48fb1; /* pink border */
+  background-color:#ffffff;
+  box-shadow:0 12px 28px rgba(0,0,0,.15);
+  margin:0 auto;
+  border-radius:12px;
+}
+
+/* Left List */
+#dhtmlgoodies_listOfItems{
+  float:left;
+  padding:5px;
+  margin:5px;
+  width:300px;
+}
+
+#dhtmlgoodies_listOfItems div p{
+  margin:0;
+  padding:6px;
+  background-color:#f48fb1; /* pink header */
+  color:#fff;
+  font-weight:bold;
+  border-radius:6px;
+}
+
+/* Right Boxes */
+#dhtmlgoodies_mainContainer{
+  width:460px;
+  float:left;
+  margin-left:10px;
+}
+
+#dhtmlgoodies_mainContainer div{
+  border:1px solid #a8e6cf;
+  background-color:#ffffff;
+  padding:4px;
+  margin-bottom:8px;
+  border-radius:8px;
+}
+
+#dhtmlgoodies_mainContainer div p{
+  margin:0;
+  padding:6px;
+  background-color:#a8e6cf; /* avocado header */
+  color:#1b1b1b;
+  font-weight:bold;
+  border-radius:6px;
+}
+
+/* Draggable items */
+#dhtmlgoodies_dragDropContainer li,#dragContent li,li#indicateDestination{
+  list-style-type:none;
+  height:18px;
+  background-color:#fce4ec; /* soft pink */
+  border:1px solid #f48fb1;
+  padding:8px 10px;
+  margin-bottom:6px;
+  cursor:pointer;
+  font-size:14px;
+  border-radius:999px;
+  font-weight:600;
+}
+
+/* Correct and wrong */
+#dhtmlgoodies_dragDropContainer ul li.correctAnswer{
+  background-color:#4CAF50; /* green */
+  color:#fff;
+}
+#dhtmlgoodies_dragDropContainer ul li.wrongAnswer{
+  background-color:#E53935; /* red */
+  color:#fff;
+}
+
+#dragContent{
+  position:absolute;
+  z-index:2000;
+}
+
+#dragDropIndicator{
+  position:absolute;
+  width:7px;
+  height:10px;
+  z-index:1000;
+  display:none;
+}
+
+p{line-height:1.5;}

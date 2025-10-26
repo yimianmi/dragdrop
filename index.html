@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Drag and Drop — Extended Chords</title>
+  <link rel="stylesheet" href="style.css">
+
+  <script type="text/javascript">
+    var boxSizeArray = [3,3,3];
+    var arrow_offsetX = -5, arrow_offsetY = 0;
+    var arrow_offsetX_firefox = -6, arrow_offsetY_firefox = -13;
+    var verticalSpaceBetweenListItems = 3;
+    var initShuffleItems = true;
+    var indicateDestionationByUseOfArrow = true;
+    var lockedAfterDrag = false;
+
+    var dragDropTopContainer=false,dragTimer=-1,dragContentObj=false,contentToBeDragged=false,contentToBeDragged_src=false,contentToBeDragged_next=false,destinationObj=false,dragDropIndicator=false,ulPositionArray=new Array(),mouseoverObj=false,MSIE=navigator.userAgent.indexOf('MSIE')>=0?true:false,navigatorVersion=navigator.appVersion.replace(/.*?MSIE (\d\.\d).*/g,'$1')/1,destinationBoxes=new Array(),indicateDestinationBox=false;
+    function getTopPos(o){var r=o.offsetTop;while((o=o.offsetParent)!=null){if(o.tagName!='HTML')r+=o.offsetTop;}return r;}
+    function getLeftPos(o){var r=o.offsetLeft;while((o=o.offsetParent)!=null){if(o.tagName!='HTML')r+=o.offsetLeft;}return r;}
+    function cancelEvent(){return false;}
+    function initDrag(e){if(document.all)e=event;if(lockedAfterDrag&&this.parentNode.id!='allItems')return;var st=Math.max(document.body.scrollTop,document.documentElement.scrollTop),sl=Math.max(document.body.scrollLeft,document.documentElement.scrollLeft);dragTimer=0;dragContentObj.style.left=e.clientX+sl+'px';dragContentObj.style.top=e.clientY+st+'px';contentToBeDragged=this;contentToBeDragged_src=this.parentNode;contentToBeDragged_next=false;if(this.nextSibling){contentToBeDragged_next=this.nextSibling;if(!this.tagName&&contentToBeDragged_next.nextSibling)contentToBeDragged_next=contentToBeDragged_next.nextSibling;}timerDrag();return false;}
+    function everythingIsCorrect(){alert('Great job! All correct.');}
+    function timerDrag(){if(dragTimer>=0&&dragTimer<10){dragTimer++;setTimeout('timerDrag()',10);return;}if(dragTimer==10){dragContentObj.style.display='block';dragContentObj.appendChild(contentToBeDragged);}}
+    function moveDragContent(e){if(dragTimer<10){if(contentToBeDragged){if(contentToBeDragged_next){contentToBeDragged_src.insertBefore(contentToBeDragged,contentToBeDragged_next);}else{contentToBeDragged_src.appendChild(contentToBeDragged);}}return;}
+      if(document.all)e=event;var st=Math.max(document.body.scrollTop,document.documentElement.scrollTop),sl=Math.max(document.body.scrollLeft,document.documentElement.scrollLeft);
+      dragContentObj.style.left=e.clientX+sl+'px';dragContentObj.style.top=e.clientY+st+'px';
+      if(mouseoverObj)mouseoverObj.className='';destinationObj=false;dragDropIndicator.style.display='none';if(indicateDestinationBox)indicateDestinationBox.style.display='none';
+      var x=e.clientX+sl,y=e.clientY+st,w=dragContentObj.offsetWidth,h=dragContentObj.offsetHeight,tmpX=arrow_offsetX,tmpY=arrow_offsetY;
+      if(!document.all){tmpX=arrow_offsetX_firefox;tmpY=arrow_offsetY_firefox;}
+      for(var i=0;i<ulPositionArray.length;i++){
+        var L=ulPositionArray[i]['left'],T=ulPositionArray[i]['top'],H=ulPositionArray[i]['height'],W=ulPositionArray[i]['width'];
+        if((x+w)>L&&x<(L+W)&&(y+h)>T&&y<(T+H)){
+          var noExisting=ulPositionArray[i]['obj'].getElementsByTagName('LI').length;
+          if(indicateDestinationBox&&indicateDestinationBox.parentNode==ulPositionArray[i]['obj'])noExisting--;
+          if(noExisting<boxSizeArray[i-1]||i==0){
+            dragDropIndicator.style.left=L+tmpX+'px';
+            var subLi=ulPositionArray[i]['obj'].getElementsByTagName('LI');
+            for(var j=0;j<subLi.length;j++){
+              var t=getTopPos(subLi[j]);
+              if(indicateDestionationByUseOfArrow){
+                if(y<t){destinationObj=subLi[j];dragDropIndicator.style.top=t+tmpY-Math.round(dragDropIndicator.clientHeight/2)+'px';dragDropIndicator.style.display='block';break;}
+              }else{
+                if(y<t){destinationObj=subLi[j];indicateDestinationBox.style.display='block';subLi[j].parentNode.insertBefore(indicateDestinationBox,subLi[j]);break;}
+              }
+            }
+            if(!indicateDestionationByUseOfArrow){
+              if(indicateDestinationBox.style.display=='none'){indicateDestinationBox.style.display='block';ulPositionArray[i]['obj'].appendChild(indicateDestinationBox);}
+            }else{
+              if(subLi.length>0&&dragDropIndicator.style.display=='none'){
+                dragDropIndicator.style.top=getTopPos(subLi[subLi.length-1])+subLi[subLi.length-1].offsetHeight+tmpY+'px';dragDropIndicator.style.display='block';
+              }
+              if(subLi.length==0){dragDropIndicator.style.top=T+arrow_offsetY+'px';dragDropIndicator.style.display='block';}
+            }
+            if(!destinationObj)destinationObj=ulPositionArray[i]['obj'];mouseoverObj=ulPositionArray[i]['obj'].parentNode;mouseoverObj.className='mouseover';return;
+          }
+        }
+      }
+    }
+    function checkAnswers(){
+      for(var i=0;i<destinationBoxes.length;i++){
+        var subLis=destinationBoxes[i].getElementsByTagName('LI');
+        if(subLis.length<boxSizeArray[i])return;
+        for(var k=0;k<subLis.length;k++){ if(subLis[k].className=='wrongAnswer')return; }
+      }
+      everythingIsCorrect();
+    }
+    function dragDropEnd(e){
+      if(dragTimer==-1)return;if(dragTimer<10){dragTimer=-1;return;}
+      dragTimer=-1;if(document.all)e=event;
+      if(destinationObj){
+        var gid=contentToBeDragged.getAttribute('groupId'); if(!gid)gid=contentToBeDragged.groupId;
+        var destCheck=destinationObj; if(destinationObj.tagName!='UL'){destCheck=destinationObj.parentNode;}
+        var ok=false;
+        if(gid==destCheck.id){contentToBeDragged.className='correctAnswer';ok=true;}else{contentToBeDragged.className='wrongAnswer';}
+        if(destinationObj.id=='allItems'||destinationObj.parentNode.id=='allItems')contentToBeDragged.className='';
+        if(destinationObj.tagName=='UL'){destinationObj.appendChild(contentToBeDragged);}else{destinationObj.parentNode.insertBefore(contentToBeDragged,destinationObj);}
+        mouseoverObj.className='';destinationObj=false;dragDropIndicator.style.display='none';
+        if(indicateDestinationBox){indicateDestinationBox.style.display='none';document.body.appendChild(indicateDestinationBox);}
+        contentToBeDragged=false; if(ok)checkAnswers(); return;
+      }
+      if(contentToBeDragged_next){contentToBeDragged_src.insertBefore(contentToBeDragged,contentToBeDragged_next);}else{contentToBeDragged_src.appendChild(contentToBeDragged);}
+      contentToBeDragged=false;dragDropIndicator.style.display='none';
+      if(indicateDestinationBox){indicateDestinationBox.style.display='none';document.body.appendChild(indicateDestinationBox);}mouseoverObj=false;
+    }
+    function initDragDropScript(){
+      dragContentObj=document.getElementById('dragContent');dragDropIndicator=document.getElementById('dragDropIndicator');dragDropTopContainer=document.getElementById('dhtmlgoodies_dragDropContainer');
+      document.documentElement.onselectstart=cancelEvent;
+      var lis=dragDropTopContainer.getElementsByTagName('LI'),itemHeight=false;
+      for(var i=0;i<lis.length;i++){lis[i].onmousedown=initDrag;lis[i].onselectstart=cancelEvent;if(!itemHeight)itemHeight=lis[i].offsetHeight;if(MSIE&&navigatorVersion/1<6){lis[i].style.cursor='hand';}}
+      var mainContainer=document.getElementById('dhtmlgoodies_mainContainer');var uls=mainContainer.getElementsByTagName('UL');itemHeight=itemHeight+verticalSpaceBetweenListItems;
+      for(var i=0;i<uls.length;i++){uls[i].style.height=itemHeight*boxSizeArray[i]+'px';destinationBoxes[destinationBoxes.length]=uls[i];}
+      var ulArray=dragDropTopContainer.getElementsByTagName('UL');
+      for(var i=0;i<ulArray.length;i++){ulPositionArray[i]=new Array();ulPositionArray[i]['left']=getLeftPos(ulArray[i]);ulPositionArray[i]['top']=getTopPos(ulArray[i]);ulPositionArray[i]['width']=ulArray[i].offsetWidth;ulPositionArray[i]['height']=ulArray[i].clientHeight;ulPositionArray[i]['obj']=ulArray[i];}
+      if(initShuffleItems){var allItemsObj=document.getElementById('allItems');var initItems=allItemsObj.getElementsByTagName('LI');for(var i=0;i<(initItems.length*10);i++){var idx=Math.floor(Math.random()*initItems.length);allItemsObj.appendChild(initItems[idx]);}}
+      if(!indicateDestionationByUseOfArrow){indicateDestinationBox=document.createElement('LI');indicateDestinationBox.id='indicateDestination';indicateDestinationBox.style.display='none';document.body.appendChild(indicateDestinationBox);}
+    }
+    document.documentElement.onmouseup = dragDropEnd;
+    document.documentElement.onmousemove = moveDragContent;
+    window.onload=initDragDropScript;
+  </script>
+</head>
+<body>
+  <h1 align="center">Extended Chords — Drag & Drop</h1>
+  <div class="banner">Drag each rule into the correct chord area. Each area accepts <strong>3 items</strong>.</div>
+
+  <div id="dhtmlgoodies_dragDropContainer">
+    <div id="dhtmlgoodies_listOfItems">
+      <div>
+        <p>Rules / Tips</p>
+        <ul id="allItems">
+          <li id="i1" groupid="box1">keep 3rd</li>
+          <li id="i2" groupid="box1">keep 7th</li>
+          <li id="i3" groupid="box1">keep 9th</li>
+          <li id="i4" groupid="box2">keep 7th</li>
+          <li id="i5" groupid="box2">keep 9th</li>
+          <li id="i6" groupid="box2">keep 11th</li>
+          <li id="i7" groupid="box3">keep 3rd</li>
+          <li id="i8" groupid="box3">keep 7th</li>
+          <li id="i9" groupid="box3">keep 13th</li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="dhtmlgoodies_mainContainer">
+      <div><p>9th Chord</p><ul id="box1"></ul></div>
+      <div><p>11th Chord</p><ul id="box2"></ul></div>
+      <div><p>13th Chord</p><ul id="box3"></ul></div>
+    </div>
+  </div>
+
+  <ul id="dragContent" style="display:none;"></ul>
+  <div id="dragDropIndicator" style="display:none;"><img src="insert.gif" alt=""></div>
+</body>
+</html>
